@@ -1,0 +1,884 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loving Homes</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --g1:#00ff87;--g2:#00c96b;--g3:#00a855;--g4:#007a3d;--g5:#004d26;
+  --neon:#39ff14;
+  --dark:#060f0a;--dark2:#0a1a0f;--dark3:#0f2516;--dark4:#152d1c;
+  --text:#d4f5e2;--text-muted:#5a8a6e;
+  --card:#0d1f14;--border:rgba(0,255,135,0.15);
+}
+.light{
+  --dark:#f0faf4;--dark2:#e4f5eb;--dark3:#d0eedb;--dark4:#c0e6cc;
+  --text:#0a2015;--text-muted:#3a6a4e;
+  --card:#ffffff;--border:rgba(0,160,80,0.2);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:var(--dark);color:var(--text);overflow-x:hidden;transition:background .4s,color .4s}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--dark)}
+::-webkit-scrollbar-thumb{background:var(--g2);border-radius:2px}
+
+/* ===== NAV ===== */
+nav{
+  position:fixed;top:0;width:100%;z-index:1000;
+  background:rgba(6,15,10,0.92);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  height:68px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 2.5rem;transition:background .4s;
+}
+.light nav{background:rgba(240,250,244,0.95)}
+.nav-logo{font-size:1.5rem;font-weight:800;letter-spacing:2px;color:var(--g1);
+  text-shadow:0 0 20px rgba(0,255,135,0.5);cursor:pointer;display:flex;align-items:center;gap:.4rem}
+.nav-logo span{color:var(--text);font-weight:300}
+
+.nav-links{display:flex;gap:.3rem;list-style:none}
+.nav-links button{
+  background:none;border:none;cursor:pointer;
+  color:var(--text-muted);font-size:.85rem;letter-spacing:1px;
+  padding:8px 16px;border-radius:25px;transition:all .3s;
+  text-transform:uppercase;
+}
+.nav-links button:hover,.nav-links button.active{
+  color:var(--g1);background:rgba(0,255,135,0.08);
+}
+.nav-links button.active{box-shadow:inset 0 0 0 1px rgba(0,255,135,0.3)}
+
+.nav-actions{display:flex;gap:.7rem;align-items:center}
+.theme-btn{
+  width:42px;height:24px;border-radius:12px;border:1px solid var(--border);
+  background:var(--dark3);cursor:pointer;position:relative;transition:all .3s;
+  display:flex;align-items:center;
+}
+.theme-knob{
+  width:18px;height:18px;border-radius:50%;background:var(--g2);
+  position:absolute;left:2px;transition:transform .3s;
+  box-shadow:0 0 8px var(--g2);
+}
+.light .theme-knob{transform:translateX(18px);background:var(--g4)}
+.lang-btn{
+  background:none;border:1px solid var(--border);color:var(--g1);
+  padding:5px 14px;border-radius:20px;cursor:pointer;font-size:.82rem;
+  transition:all .3s;
+}
+.lang-btn:hover{background:var(--g1);color:var(--dark)}
+.btn-book{
+  background:linear-gradient(135deg,var(--g1),var(--g3));
+  color:var(--dark);padding:8px 20px;border-radius:25px;
+  border:none;cursor:pointer;font-weight:700;font-size:.82rem;
+  transition:all .3s;box-shadow:0 0 18px rgba(0,255,135,0.3);
+}
+.btn-book:hover{transform:translateY(-2px);box-shadow:0 0 35px rgba(0,255,135,0.6)}
+
+/* ===== PAGES ===== */
+.page{display:none;padding-top:68px;min-height:100vh}
+.page.active{display:block}
+
+/* ===== HERO ===== */
+.hero{
+  min-height:calc(100vh - 68px);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(to bottom, rgba(6,15,10,.55) 0%, rgba(6,15,10,.75) 100%),
+    url('./images/hero-dog.jpg') center/cover no-repeat;
+}
+.grid-lines{
+  position:absolute;inset:0;
+  background-image:linear-gradient(var(--border) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:70px 70px;
+}
+#particles{position:absolute;inset:0;pointer-events:none}
+.particle{position:absolute;border-radius:50%;background:var(--g1);opacity:.5;animation:floatUp linear infinite}
+@keyframes floatUp{
+  0%{transform:translateY(100vh) scale(0);opacity:0}
+  10%{opacity:.5}90%{opacity:.5}
+  100%{transform:translateY(-50px) scale(1);opacity:0}
+}
+
+/* Dog SVG hero */
+.hero-dog{
+  position:absolute;right:5%;top:50%;transform:translateY(-50%);
+  width:380px;height:380px;opacity:.12;
+  animation:dogPulse 4s ease-in-out infinite;
+}
+@keyframes dogPulse{0%,100%{opacity:.12;transform:translateY(-50%) scale(1)}50%{opacity:.18;transform:translateY(-52%) scale(1.02)}}
+.light .hero-dog{opacity:.07}
+
+.hero-content{position:relative;z-index:2;text-align:center;max-width:760px;padding:2rem}
+.hero-badge{
+  display:inline-block;border:1px solid rgba(0,255,135,.4);
+  color:var(--g1);font-size:.72rem;letter-spacing:3px;
+  padding:6px 22px;border-radius:20px;margin-bottom:1.8rem;
+  animation:badgePulse 2.5s ease-in-out infinite;
+}
+@keyframes badgePulse{
+  0%,100%{box-shadow:0 0 10px rgba(0,255,135,.3)}
+  50%{box-shadow:0 0 28px rgba(0,255,135,.7)}
+}
+.hero-title{
+  font-size:clamp(2.4rem,6vw,4.8rem);font-weight:800;line-height:1.1;
+  margin-bottom:1rem;
+}
+.hero-title .line1{
+  background:linear-gradient(135deg,#fff 30%,#b0ffda 70%,var(--g1) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-title .neon{
+  display:block;color:var(--neon);-webkit-text-fill-color:var(--neon);
+  text-shadow:0 0 30px rgba(57,255,20,.8),0 0 60px rgba(57,255,20,.4);
+  animation:neonFlick 3s ease-in-out infinite;
+}
+@keyframes neonFlick{
+  0%,100%{text-shadow:0 0 30px rgba(57,255,20,.8),0 0 60px rgba(57,255,20,.4)}
+  50%{text-shadow:0 0 55px rgba(57,255,20,1),0 0 110px rgba(57,255,20,.6)}
+}
+.hero-sub{font-size:1.05rem;color:var(--text-muted);margin-bottom:2.5rem;line-height:1.7}
+.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.btn-primary{
+  background:linear-gradient(135deg,var(--g1),var(--g3));
+  color:var(--dark);padding:14px 36px;border-radius:50px;
+  border:none;cursor:pointer;font-weight:700;font-size:.95rem;
+  letter-spacing:1px;transition:all .3s;
+  box-shadow:0 0 30px rgba(0,255,135,.4);
+}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 0 55px rgba(0,255,135,.7)}
+.btn-secondary{
+  background:none;border:1px solid rgba(0,255,135,.4);
+  color:var(--g1);padding:14px 36px;border-radius:50px;
+  cursor:pointer;font-size:.95rem;transition:all .3s;
+}
+.btn-secondary:hover{background:rgba(0,255,135,.08);border-color:var(--g1)}
+.scroll-ind{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:.5rem;
+  color:var(--text-muted);font-size:.72rem;letter-spacing:2px;
+  animation:bounce 2s ease-in-out infinite;
+}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-8px)}}
+.scroll-line{width:1px;height:38px;background:linear-gradient(to bottom,var(--g2),transparent)}
+
+/* ===== STATS BAR ===== */
+.stats{
+  background:var(--dark2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:2.5rem 2rem;display:flex;justify-content:center;gap:4rem;flex-wrap:wrap;
+}
+.stat{text-align:center}
+.stat-num{font-size:2.4rem;font-weight:800;color:var(--g1);text-shadow:0 0 18px rgba(0,255,135,.5)}
+.stat-label{font-size:.75rem;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;margin-top:.3rem}
+
+/* ===== SECTIONS ===== */
+.section{padding:5rem 2rem}
+.sec-header{text-align:center;margin-bottom:3.5rem}
+.sec-tag{color:var(--g2);font-size:.72rem;letter-spacing:3px;text-transform:uppercase;display:block;margin-bottom:.7rem}
+.sec-title{
+  font-size:clamp(1.7rem,4vw,2.8rem);font-weight:700;
+  background:linear-gradient(135deg,var(--text) 40%,var(--g1) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:1rem;
+}
+.sec-line{width:55px;height:2px;margin:0 auto;background:linear-gradient(to right,transparent,var(--g2),transparent)}
+
+/* ===== SERVICES GRID ===== */
+.services-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1.8rem;max-width:1200px;margin:0 auto;
+}
+.s-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:18px;overflow:hidden;transition:all .4s;position:relative;
+}
+.s-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(0,255,135,.06),transparent);
+  opacity:0;transition:opacity .4s;
+}
+.s-card:hover{transform:translateY(-7px);border-color:rgba(0,255,135,.4)}
+.s-card:hover::before{opacity:1}
+.card-visual{
+  height:200px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--dark3),var(--dark4));
+  font-size:5rem;position:relative;overflow:hidden;
+}
+.card-visual::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to top,var(--card),transparent 60%);
+}
+.card-glow{
+  position:absolute;width:100px;height:100px;border-radius:50%;
+  background:var(--g2);filter:blur(40px);opacity:.15;
+}
+.card-body{padding:1.5rem}
+.card-icon{
+  width:38px;height:38px;border-radius:10px;
+  background:rgba(0,255,135,.08);border:1px solid rgba(0,255,135,.25);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;margin-bottom:.9rem;
+}
+.card-title{font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:.5rem}
+.card-desc{font-size:.87rem;color:var(--text-muted);line-height:1.6}
+.card-price{
+  margin-top:1rem;padding-top:1rem;
+  border-top:1px solid var(--border);
+  color:var(--g1);font-weight:700;
+}
+
+/* ===== FEATURES ===== */
+.features-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:1.5rem;max-width:1100px;margin:0 auto;
+}
+.feat{
+  text-align:center;padding:2rem 1rem;
+  border:1px solid var(--border);border-radius:14px;
+  transition:all .3s;background:var(--card);
+}
+.feat:hover{border-color:rgba(0,255,135,.35);background:rgba(0,255,135,.03);transform:translateY(-4px)}
+.feat-icon{font-size:2.3rem;margin-bottom:.9rem;filter:drop-shadow(0 0 10px rgba(0,255,135,.5))}
+.feat h3{font-size:.95rem;font-weight:700;margin-bottom:.4rem;color:var(--text)}
+.feat p{font-size:.82rem;color:var(--text-muted);line-height:1.6}
+
+/* ===== BOOKING PAGE ===== */
+.booking-wrap{max-width:680px;margin:0 auto}
+.booking-box{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:20px;padding:2.8rem;
+  box-shadow:0 0 60px rgba(0,255,135,.06);
+}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem;margin-bottom:1.4rem}
+.fg{display:flex;flex-direction:column;gap:.45rem}
+.fg.full{grid-column:1/-1}
+.fg label{font-size:.75rem;color:var(--g2);letter-spacing:1px;text-transform:uppercase}
+.fg input,.fg select,.fg textarea{
+  background:rgba(0,255,135,.03);border:1px solid var(--border);
+  border-radius:9px;padding:11px 15px;color:var(--text);font-size:.9rem;
+  outline:none;transition:border-color .3s;
+}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--g2)}
+.fg select option{background:var(--dark3)}
+.form-submit{
+  width:100%;background:linear-gradient(135deg,var(--g1),var(--g3));
+  color:var(--dark);padding:15px;border-radius:50px;border:none;
+  cursor:pointer;font-weight:700;font-size:.95rem;letter-spacing:2px;
+  text-transform:uppercase;transition:all .3s;
+  box-shadow:0 0 28px rgba(0,255,135,.3);
+}
+.form-submit:hover{transform:translateY(-2px);box-shadow:0 0 50px rgba(0,255,135,.6)}
+
+/* ===== REVIEWS PAGE ===== */
+.reviews-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1.8rem;max-width:1100px;margin:0 auto;
+}
+.r-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:2rem;transition:all .3s;
+}
+.r-card:hover{border-color:rgba(0,255,135,.35);transform:translateY(-4px)}
+.stars{color:var(--g1);font-size:1rem;margin-bottom:1rem;
+  text-shadow:0 0 8px rgba(0,255,135,.5)}
+.r-text{font-size:.9rem;color:var(--text-muted);line-height:1.7;margin-bottom:1.5rem;font-style:italic}
+.r-author{display:flex;align-items:center;gap:.9rem}
+.r-avatar{
+  width:44px;height:44px;border-radius:50%;
+  background:linear-gradient(135deg,var(--g1),var(--g4));
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;
+}
+.r-name{font-weight:700;font-size:.88rem}
+.r-dog{font-size:.78rem;color:var(--text-muted)}
+
+/* ===== GALLERY PAGE ===== */
+.gallery-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:1.2rem;max-width:1200px;margin:0 auto;
+}
+.g-item{
+  border-radius:14px;overflow:hidden;
+  background:var(--dark3);
+  border:1px solid var(--border);
+  aspect-ratio:1;cursor:pointer;transition:all .4s;position:relative;
+}
+.g-item img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .4s;
+}
+.g-item:hover{border-color:var(--g2);box-shadow:0 0 25px rgba(0,255,135,.2)}
+.g-item:hover img{transform:scale(1.07)}
+.g-item::before{
+  content:'';position:absolute;inset:0;z-index:1;
+  background:radial-gradient(circle at center,rgba(0,255,135,.08),transparent 70%);
+  opacity:0;transition:opacity .4s;
+}
+.g-item:hover::before{opacity:1}
+.g-caption{
+  position:absolute;bottom:0;left:0;right:0;z-index:2;padding:.8rem;
+  background:linear-gradient(to top,rgba(6,15,10,.9),transparent);
+  color:var(--g1);font-size:.78rem;letter-spacing:1px;text-align:center;
+  transform:translateY(100%);transition:transform .3s;
+}
+.g-item:hover .g-caption{transform:translateY(0)}
+
+/* ===== ABOUT PAGE ===== */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;max-width:1100px;margin:0 auto}
+.about-visual{
+  height:450px;border-radius:20px;
+  background:linear-gradient(135deg,var(--dark3),var(--dark4));
+  border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:10rem;position:relative;overflow:hidden;
+}
+.about-visual::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 40% 60%,rgba(0,255,135,.08),transparent 60%);
+}
+.about-text h2{
+  font-size:2.2rem;font-weight:800;margin-bottom:1.2rem;
+  background:linear-gradient(135deg,var(--text),var(--g1));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.about-text p{color:var(--text-muted);line-height:1.8;margin-bottom:1rem;font-size:.95rem}
+.about-badges{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem}
+.badge{
+  border:1px solid var(--border);border-radius:25px;
+  padding:6px 16px;font-size:.78rem;color:var(--g2);
+  background:rgba(0,255,135,.05);
+}
+@media(max-width:768px){
+  .about-grid{grid-template-columns:1fr}
+  .about-visual{height:250px;font-size:6rem}
+  .form-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
+}
+
+/* ===== AI ASSISTANT ===== */
+.ai-btn{
+  position:fixed;bottom:2rem;left:2rem;z-index:999;
+  width:58px;height:58px;border-radius:50%;
+  background:linear-gradient(135deg,var(--g1),var(--g3));
+  border:none;cursor:pointer;font-size:1.4rem;
+  box-shadow:0 0 28px rgba(0,255,135,.5);
+  transition:all .3s;animation:badgePulse 2.5s ease-in-out infinite;
+}
+.ai-btn:hover{transform:scale(1.12)}
+.ai-panel{
+  position:fixed;bottom:5.5rem;left:2rem;z-index:998;
+  width:350px;background:var(--card);
+  border:1px solid rgba(0,255,135,.3);border-radius:20px;
+  overflow:hidden;display:none;
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+.ai-panel.open{display:flex;flex-direction:column;animation:slideUp .3s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.ai-head{
+  background:linear-gradient(135deg,rgba(0,255,135,.1),rgba(0,255,135,.04));
+  padding:1.1rem 1.4rem;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);
+}
+.ai-title{font-weight:700;font-size:.92rem;color:var(--g1)}
+.ai-close{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.1rem}
+.ai-msgs{flex:1;overflow-y:auto;padding:1.1rem;display:flex;flex-direction:column;gap:.7rem;max-height:280px}
+.msg{padding:.75rem 1rem;border-radius:12px;font-size:.85rem;line-height:1.5;max-width:85%}
+.msg.bot{background:rgba(0,255,135,.06);border:1px solid rgba(0,255,135,.12);align-self:flex-start}
+.msg.user{background:rgba(0,255,135,.18);align-self:flex-end}
+.typing{display:flex;gap:4px;padding:.75rem 1rem;align-self:flex-start}
+.typing span{width:6px;height:6px;border-radius:50%;background:var(--g1);animation:typeDot 1s infinite}
+.typing span:nth-child(2){animation-delay:.2s}.typing span:nth-child(3){animation-delay:.4s}
+@keyframes typeDot{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-4px)}}
+.ai-input{padding:.9rem;border-top:1px solid var(--border);display:flex;gap:.5rem}
+.ai-input input{
+  flex:1;background:rgba(0,255,135,.03);border:1px solid var(--border);
+  border-radius:25px;padding:8px 15px;color:var(--text);font-size:.83rem;outline:none;
+}
+.ai-input input:focus{border-color:var(--g2)}
+.ai-send{
+  background:var(--g2);border:none;border-radius:50%;
+  width:35px;height:35px;cursor:pointer;font-size:.85rem;
+  transition:all .3s;display:flex;align-items:center;justify-content:center;
+}
+.ai-send:hover{background:var(--g1);transform:scale(1.1)}
+
+/* ===== MODAL ===== */
+.modal-ov{
+  display:none;position:fixed;inset:0;z-index:2000;
+  background:rgba(0,0,0,.7);backdrop-filter:blur(5px);
+  align-items:center;justify-content:center;
+}
+.modal-ov.show{display:flex}
+.modal{
+  background:var(--card);border:1px solid rgba(0,255,135,.3);
+  border-radius:20px;padding:3rem;text-align:center;
+  max-width:390px;width:90%;animation:slideUp .3s ease;
+}
+.modal-ico{font-size:3.5rem;margin-bottom:1rem}
+.modal h2{color:var(--g1);margin-bottom:.5rem}
+.modal p{color:var(--text-muted);margin-bottom:2rem}
+.modal-close{
+  background:linear-gradient(135deg,var(--g1),var(--g3));
+  color:var(--dark);border:none;padding:10px 32px;
+  border-radius:25px;cursor:pointer;font-weight:700;
+}
+
+/* ===== FOOTER ===== */
+footer{
+  background:var(--dark2);border-top:1px solid var(--border);
+  padding:2.5rem 2rem 1.5rem;text-align:center;
+}
+.f-logo{font-size:1.6rem;font-weight:800;color:var(--g1);margin-bottom:.4rem;
+  text-shadow:0 0 18px rgba(0,255,135,.4)}
+.f-tag{color:var(--text-muted);font-size:.82rem;margin-bottom:1.8rem}
+.f-links{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;margin-bottom:1.8rem}
+.f-links a{color:var(--text-muted);text-decoration:none;font-size:.82rem;transition:color .3s}
+.f-links a:hover{color:var(--g1)}
+.f-copy{color:var(--text-muted);font-size:.72rem;border-top:1px solid var(--border);padding-top:1.2rem}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">🐾 LOVING <span>HOMES</span></div>
+  <ul class="nav-links">
+    <li><button onclick="showPage('home')" id="nb-home" class="active" data-i18n="nb_home">الرئيسية</button></li>
+    <li><button onclick="showPage('services')" id="nb-services" data-i18n="nb_services">الخدمات</button></li>
+    <li><button onclick="showPage('gallery')" id="nb-gallery" data-i18n="nb_gallery">المعرض</button></li>
+    <li><button onclick="showPage('about')" id="nb-about" data-i18n="nb_about">من نحن</button></li>
+    <li><button onclick="showPage('reviews')" id="nb-reviews" data-i18n="nb_reviews">التقييمات</button></li>
+    <li><button onclick="window.location.href='my-images.html'" style="color: var(--g1); background: rgba(0,255,135,0.1);">📸 صوري</button></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="theme-btn" onclick="toggleTheme()" title="Light/Dark">
+      <div class="theme-knob"></div>
+    </button>
+    <button class="lang-btn" onclick="toggleLang()">EN</button>
+    <button class="btn-book" onclick="showPage('booking')" data-i18n="nb_book">احجز الآن</button>
+  </div>
+</nav>
+
+<!-- ========== PAGE: HOME ========== -->
+<div class="page active" id="page-home">
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="grid-lines"></div>
+    <div id="particles"></div>
+    <div class="hero-dog">
+      <svg viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M60 145Q38 122 44 88Q50 55 84 52Q94 26 115 32Q138 18 152 46Q174 46 168 73Q185 90 174 112Q162 134 145 138Q145 164 123 170Q112 176 100 164Q88 176 77 164Q67 164 60 145Z" fill="rgba(0,255,135,.7)"/>
+        <ellipse cx="87" cy="70" rx="7" ry="8" fill="rgba(6,15,10,.8)"/>
+        <ellipse cx="118" cy="70" rx="7" ry="8" fill="rgba(6,15,10,.8)"/>
+        <path d="M92 88Q102 99 113 88" stroke="rgba(6,15,10,.8)" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <ellipse cx="102" cy="83" rx="9" ry="6" fill="rgba(0,200,80,.4)"/>
+        <path d="M78 52Q66 27 72 16Q83 11 85 38" fill="rgba(0,200,80,.6)"/>
+        <path d="M128 52Q140 27 134 16Q123 11 121 38" fill="rgba(0,200,80,.6)"/>
+      </svg>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge" data-i18n="hero_badge">✦ الفندق الأفخم لكلبك ✦</div>
+      <h1 class="hero-title">
+        <span class="line1" data-i18n="hero_t1">يستحق كلبك</span>
+        <span class="neon" data-i18n="hero_t2">أفضل معاملة</span>
+      </h1>
+      <p class="hero-sub" data-i18n="hero_sub">إقامة فاخرة، رعاية استثنائية، وحب لا محدود — كلبك يستحق الأفضل في Paws Palace</p>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="showPage('booking')" data-i18n="hero_b1">🐾 احجز الآن</button>
+        <button class="btn-secondary" onclick="showPage('services')" data-i18n="hero_b2">اكتشف الخدمات</button>
+      </div>
+    </div>
+    <div class="scroll-ind">
+      <span data-i18n="scroll">مرر للأسفل</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-num" data-count="2500">0</div><div class="stat-label" data-i18n="st1">كلب سعيد</div></div>
+    <div class="stat"><div class="stat-num" data-count="8">0</div><div class="stat-label" data-i18n="st2">سنوات خبرة</div></div>
+    <div class="stat"><div class="stat-num" data-count="24">0</div><div class="stat-label" data-i18n="st3">ساعة مراقبة</div></div>
+    <div class="stat"><div class="stat-num" data-count="98">0</div><div class="stat-label" data-i18n="st4">% رضا عملاء</div></div>
+  </div>
+
+  <!-- Features on home -->
+  <section class="section" style="background:var(--dark2)">
+    <div class="sec-header">
+      <span class="sec-tag" data-i18n="f_tag">لماذا نحن؟</span>
+      <h2 class="sec-title" data-i18n="f_title">ما يميّز Paws Palace</h2>
+      <div class="sec-line"></div>
+    </div>
+    <div class="features-grid">
+      <div class="feat"><div class="feat-icon">🏥</div><h3 data-i18n="f1t">طبيب بيطري 24/7</h3><p data-i18n="f1d">طبيب متخصص يسهر على صحة كلبك على مدار الساعة</p></div>
+      <div class="feat"><div class="feat-icon">📹</div><h3 data-i18n="f2t">كاميرات مباشرة</h3><p data-i18n="f2d">تابع كلبك لحظة بلحظة من هاتفك أينما كنت</p></div>
+      <div class="feat"><div class="feat-icon">🍖</div><h3 data-i18n="f3t">طعام مخصص</h3><p data-i18n="f3d">وجبات يومية مغذية مصممة لاحتياجات كلبك</p></div>
+      <div class="feat"><div class="feat-icon">🌙</div><h3 data-i18n="f4t">رعاية ليلية</h3><p data-i18n="f4d">فريق متخصص يسهر على راحة كلبك طوال الليل</p></div>
+    </div>
+  </section>
+  <footer>
+    <div class="f-logo">🐾 PAWS PALACE</div>
+    <p class="f-tag" data-i18n="f_tag2">حيث يُعامَل كلبك كملك</p>
+    <div class="f-links"><a href="#" data-i18n="fl1">سياسة الخصوصية</a><a href="#" data-i18n="fl2">الشروط والأحكام</a><a href="#" data-i18n="fl3">تواصل معنا</a><a href="#" data-i18n="fl4">الأسئلة الشائعة</a></div>
+    <p class="f-copy">© 2025 Paws Palace — <span data-i18n="fc">جميع الحقوق محفوظة</span></p>
+  </footer>
+</div>
+
+<!-- ========== PAGE: SERVICES ========== -->
+<div class="page" id="page-services">
+  <section class="section">
+    <div class="sec-header">
+      <span class="sec-tag" data-i18n="sv_tag">خدماتنا الفاخرة</span>
+      <h2 class="sec-title" data-i18n="sv_title">كل ما يحتاجه كلبك</h2>
+      <div class="sec-line"></div>
+    </div>
+    <div class="services-grid">
+      <div class="s-card"><div class="card-visual"><div class="card-glow"></div>🛏️</div><div class="card-body"><div class="card-icon">👑</div><div class="card-title" data-i18n="s1t">الأجنحة الفاخرة</div><div class="card-desc" data-i18n="s1d">غرف مجهزة بأفضل الأسرّة والألعاب، مع إطلالة على الحديقة وإضاءة هادئة لراحة تامة</div><div class="card-price" data-i18n="s1p">من 150 د.أ / ليلة</div></div></div>
+      <div class="s-card"><div class="card-visual"><div class="card-glow"></div>✂️</div><div class="card-body"><div class="card-icon">💆</div><div class="card-title" data-i18n="s2t">سبا وحلاقة فاخرة</div><div class="card-desc" data-i18n="s2d">حمامات فاخرة بمنتجات طبيعية، تسريح وتهذيب الشعر، وتدليك استرخائي متخصص</div><div class="card-price" data-i18n="s2p">من 80 د.أ / جلسة</div></div></div>
+      <div class="s-card"><div class="card-visual"><div class="card-glow"></div>🎾</div><div class="card-body"><div class="card-icon">🏃</div><div class="card-title" data-i18n="s3t">منطقة اللعب والترفيه</div><div class="card-desc" data-i18n="s3d">حديقة واسعة مؤمنة مع ملاعب متنوعة وجلسات لعب جماعية تحت إشراف خبراء</div><div class="card-price" data-i18n="s3p">مجاناً مع الإقامة</div></div></div>
+      <div class="s-card"><div class="card-visual"><div class="card-glow"></div>🏊</div><div class="card-body"><div class="card-icon">💦</div><div class="card-title" data-i18n="s4t">المسبح الخاص</div><div class="card-desc" data-i18n="s4d">مسبح مخصص للكلاب بدرجة حرارة مثالية ومشرفين متخصصين في السباحة</div><div class="card-price" data-i18n="s4p">من 60 د.أ / جلسة</div></div></div>
+      <div class="s-card"><div class="card-visual"><div class="card-glow"></div>🎓</div><div class="card-body"><div class="card-icon">⭐</div><div class="card-title" data-i18n="s5t">التدريب والتأهيل</div><div class="card-desc" data-i18n="s5d">جلسات تدريب احترافية مع مدربين معتمدين لتعليم الكلب الطاعة والمهارات</div><div class="card-price" data-i18n="s5p">من 100 د.أ / دورة</div></div></div>
+      <div class="s-card"><div class="card-visual"><div class="card-glow"></div>🌿</div><div class="card-body"><div class="card-icon">🧘</div><div class="card-title" data-i18n="s6t">الحديقة العلاجية</div><div class="card-desc" data-i18n="s6d">حديقة طبيعية خاصة للاسترخاء والعلاج بالطبيعة مع جلسات تأمل للحيوانات</div><div class="card-price" data-i18n="s6p">مجاناً مع الباقة البلاتينية</div></div></div>
+    </div>
+  </section>
+  <footer><div class="f-logo">🐾 PAWS PALACE</div><p class="f-tag" data-i18n="f_tag2">حيث يُعامَل كلبك كملك</p><div class="f-links"><a href="#" data-i18n="fl1">سياسة الخصوصية</a><a href="#" data-i18n="fl2">الشروط والأحكام</a><a href="#" data-i18n="fl3">تواصل معنا</a></div><p class="f-copy">© 2025 Paws Palace — <span data-i18n="fc">جميع الحقوق محفوظة</span></p></footer>
+</div>
+
+<!-- ========== PAGE: GALLERY ========== -->
+<div class="page" id="page-gallery">
+  <section class="section">
+    <div class="sec-header">
+      <span class="sec-tag" data-i18n="gl_tag">معرض الصور</span>
+      <h2 class="sec-title" data-i18n="gl_title">لحظات لا تُنسى</h2>
+      <div class="sec-line"></div>
+    </div>
+    <div class="gallery-grid">
+      <div class="g-item"><img src="./images/gallery-1.jpg" alt="الأجنحة الفاخرة"><div class="g-caption" data-i18n="gc1">الأجنحة الفاخرة</div></div>
+      <div class="g-item"><img src="./images/gallery-2.jpg" alt="جلسة الحلاقة"><div class="g-caption" data-i18n="gc2">جلسة الحلاقة</div></div>
+      <div class="g-item"><img src="./images/gallery-3.jpg" alt="وقت اللعب"><div class="g-caption" data-i18n="gc3">وقت اللعب</div></div>
+      <div class="g-item"><img src="./images/gallery-4.jpg" alt="حمام السبا"><div class="g-caption" data-i18n="gc4">حمام السبا</div></div>
+      <div class="g-item"><img src="./images/gallery-5.jpg" alt="جلسة السباحة"><div class="g-caption" data-i18n="gc5">جلسة السباحة</div></div>
+      <div class="g-item"><img src="./images/gallery-6.jpg" alt="الحديقة العلاجية"><div class="g-caption" data-i18n="gc6">الحديقة العلاجية</div></div>
+      <div class="g-item"><img src="./images/gallery-7.jpg" alt="وجبات فاخرة"><div class="g-caption" data-i18n="gc7">وجبات فاخرة</div></div>
+      <div class="g-item"><img src="./images/gallery-8.jpg" alt="وقت القيلولة"><div class="g-caption" data-i18n="gc8">وقت القيلولة</div></div>
+    </div>
+  </section>
+  <footer><div class="f-logo">🐾 PAWS PALACE</div><p class="f-tag" data-i18n="f_tag2">حيث يُعامَل كلبك كملك</p><div class="f-links"><a href="#" data-i18n="fl1">سياسة الخصوصية</a><a href="#" data-i18n="fl2">الشروط والأحكام</a><a href="#" data-i18n="fl3">تواصل معنا</a></div><p class="f-copy">© 2025 Paws Palace — <span data-i18n="fc">جميع الحقوق محفوظة</span></p></footer>
+</div>
+
+<!-- ========== PAGE: ABOUT ========== -->
+<div class="page" id="page-about">
+  <section class="section">
+    <div class="about-grid">
+      <div class="about-visual">🐾</div>
+      <div class="about-text">
+        <h2 data-i18n="ab_title">قصتنا مع الكلاب الفاخرة</h2>
+        <p data-i18n="ab_p1">تأسس Paws Palace عام 2017 بحلم بسيط: أن يحصل كل كلب على نفس مستوى الرعاية والرفاهية التي يستحقها. بدأنا بغرفة واحدة، واليوم نفخر بكوننا أفخم فندق كلاب في المنطقة.</p>
+        <p data-i18n="ab_p2">فريقنا يتكون من أكثر من 30 متخصصاً في رعاية الحيوانات، من أطباء بيطريين معتمدين إلى مدربين محترفين ومختصين في التغذية.</p>
+        <p data-i18n="ab_p3">نؤمن أن الكلب ليس مجرد حيوان أليف، بل هو فرد من العائلة يستحق أفضل رعاية ممكنة في بيئة آمنة ومريحة ومليئة بالحب.</p>
+        <div class="about-badges">
+          <span class="badge" data-i18n="ab1">🏆 أفضل فندق 2023</span>
+          <span class="badge" data-i18n="ab2">✅ معتمد دولياً</span>
+          <span class="badge" data-i18n="ab3">🌿 صديق للبيئة</span>
+          <span class="badge" data-i18n="ab4">❤️ موثوق بالمجتمع</span>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer><div class="f-logo">🐾 PAWS PALACE</div><p class="f-tag" data-i18n="f_tag2">حيث يُعامَل كلبك كملك</p><div class="f-links"><a href="#" data-i18n="fl1">سياسة الخصوصية</a><a href="#" data-i18n="fl2">الشروط والأحكام</a><a href="#" data-i18n="fl3">تواصل معنا</a></div><p class="f-copy">© 2025 Paws Palace — <span data-i18n="fc">جميع الحقوق محفوظة</span></p></footer>
+</div>
+
+<!-- ========== PAGE: REVIEWS ========== -->
+<div class="page" id="page-reviews">
+  <section class="section">
+    <div class="sec-header">
+      <span class="sec-tag" data-i18n="rv_tag">آراء عملائنا</span>
+      <h2 class="sec-title" data-i18n="rv_title">ماذا يقول أهل الكلاب</h2>
+      <div class="sec-line"></div>
+    </div>
+    <div class="reviews-grid">
+      <div class="r-card"><div class="stars">★★★★★</div><p class="r-text" data-i18n="r1t">"تجربة لا تُنسى! كلبي عاد أكثر سعادة مما ذهب. الفريق محترف والمكان نظيف ورائع"</p><div class="r-author"><div class="r-avatar">👩</div><div><div class="r-name" data-i18n="r1n">سارة الأحمد</div><div class="r-dog" data-i18n="r1d">صاحبة "بابلو" اللابرادور</div></div></div></div>
+      <div class="r-card"><div class="stars">★★★★★</div><p class="r-text" data-i18n="r2t">"الكاميرات المباشرة ميزة رائعة! تابعت كلبي طوال الوقت وكان يلعب ويستمتع"</p><div class="r-author"><div class="r-avatar">👨</div><div><div class="r-name" data-i18n="r2n">محمد الخليل</div><div class="r-dog" data-i18n="r2d">صاحب "ماكس" الجولدن ريتريفر</div></div></div></div>
+      <div class="r-card"><div class="stars">★★★★★</div><p class="r-text" data-i18n="r3t">"أفضل فندق كلاب في المنطقة! سلوى عادت مدللة ومنظفة وسعيدة. سأحجز دائماً هنا"</p><div class="r-author"><div class="r-avatar">👩</div><div><div class="r-name" data-i18n="r3n">ريم النجار</div><div class="r-dog" data-i18n="r3d">صاحبة "سلوى" البودل</div></div></div></div>
+      <div class="r-card"><div class="stars">★★★★★</div><p class="r-text" data-i18n="r4t">"الطعام المخصص فاجأني! قدموا نظاماً غذائياً متكاملاً لكلبي حسب وزنه وعمره"</p><div class="r-author"><div class="r-avatar">👨</div><div><div class="r-name" data-i18n="r4n">خالد المنصور</div><div class="r-dog" data-i18n="r4d">صاحب "روكي" الألزاشي</div></div></div></div>
+      <div class="r-card"><div class="stars">★★★★★</div><p class="r-text" data-i18n="r5t">"المسبح كان مفاجأة رائعة! كلبي أحب السباحة ورجع محتاج نوم طويل من كثر اللعب"</p><div class="r-author"><div class="r-avatar">👩</div><div><div class="r-name" data-i18n="r5n">نور الرشيد</div><div class="r-dog" data-i18n="r5d">صاحبة "لونا" الهاسكي</div></div></div></div>
+      <div class="r-card"><div class="stars">★★★★☆</div><p class="r-text" data-i18n="r6t">"خدمة ممتازة بكل المقاييس. الموظفون ودودون جداً ويعاملون الكلاب بكثير من الحب"</p><div class="r-author"><div class="r-avatar">👨</div><div><div class="r-name" data-i18n="r6n">أحمد البكري</div><div class="r-dog" data-i18n="r6d">صاحب "تيدي" البيغل</div></div></div></div>
+    </div>
+  </section>
+  <footer><div class="f-logo">🐾 PAWS PALACE</div><p class="f-tag" data-i18n="f_tag2">حيث يُعامَل كلبك كملك</p><div class="f-links"><a href="#" data-i18n="fl1">سياسة الخصوصية</a><a href="#" data-i18n="fl2">الشروط والأحكام</a><a href="#" data-i18n="fl3">تواصل معنا</a></div><p class="f-copy">© 2025 Paws Palace — <span data-i18n="fc">جميع الحقوق محفوظة</span></p></footer>
+</div>
+
+<!-- ========== PAGE: BOOKING ========== -->
+<div class="page" id="page-booking">
+  <section class="section">
+    <div class="sec-header">
+      <span class="sec-tag" data-i18n="bk_tag">الحجز</span>
+      <h2 class="sec-title" data-i18n="bk_title">احجز مكان كلبك الآن</h2>
+      <div class="sec-line"></div>
+    </div>
+    <div class="booking-wrap">
+      <div class="booking-box">
+        <div class="form-grid">
+          <div class="fg"><label data-i18n="fm1">اسم صاحب الكلب</label><input type="text" id="ownerName" placeholder="أدخل اسمك الكريم"/></div>
+          <div class="fg"><label data-i18n="fm2">اسم الكلب</label><input type="text" id="dogName" placeholder="ما اسم رفيقك؟"/></div>
+          <div class="fg"><label data-i18n="fm3">تاريخ الوصول</label><input type="date" id="checkin"/></div>
+          <div class="fg"><label data-i18n="fm4">تاريخ المغادرة</label><input type="date" id="checkout"/></div>
+          <div class="fg"><label data-i18n="fm5">الخدمة المطلوبة</label>
+            <select id="service">
+              <option value="" data-i18n="fms">اختر الخدمة</option>
+              <option value="suite" data-i18n="s1t">الأجنحة الفاخرة</option>
+              <option value="grooming" data-i18n="s2t">سبا وحلاقة فاخرة</option>
+              <option value="play" data-i18n="s3t">منطقة اللعب</option>
+              <option value="pool" data-i18n="s4t">المسبح الخاص</option>
+              <option value="training" data-i18n="s5t">التدريب والتأهيل</option>
+            </select>
+          </div>
+          <div class="fg"><label data-i18n="fm6">سلالة الكلب</label><input type="text" id="breed" placeholder="مثال: لابرادور"/></div>
+          <div class="fg full"><label data-i18n="fm7">ملاحظات خاصة</label><textarea id="notes" rows="3" placeholder="أي احتياجات خاصة أو تعليمات؟"></textarea></div>
+        </div>
+        <button class="form-submit" onclick="submitBooking()" data-i18n="fm_sub">🐾 تأكيد الحجز</button>
+      </div>
+    </div>
+  </section>
+  <footer><div class="f-logo">🐾 PAWS PALACE</div><p class="f-tag" data-i18n="f_tag2">حيث يُعامَل كلبك كملك</p><div class="f-links"><a href="#" data-i18n="fl1">سياسة الخصوصية</a><a href="#" data-i18n="fl3">تواصل معنا</a></div><p class="f-copy">© 2025 Paws Palace — <span data-i18n="fc">جميع الحقوق محفوظة</span></p></footer>
+</div>
+
+<!-- AI ASSISTANT -->
+<button class="ai-btn" onclick="toggleAI()">🐾</button>
+<div class="ai-panel" id="aiPanel">
+  <div class="ai-head">
+    <div class="ai-title" data-i18n="ai_title">🤖 مساعد Paws Palace</div>
+    <button class="ai-close" onclick="toggleAI()">✕</button>
+  </div>
+  <div class="ai-msgs" id="aiMsgs">
+    <div class="msg bot" data-i18n="ai_welcome">مرحباً! 🐾 اسألني عن خدماتنا، الأسعار، أو أي شيء يخص كلبك!</div>
+  </div>
+  <div class="ai-input">
+    <input type="text" id="aiIn" placeholder="اسأل سؤالاً..." onkeypress="if(event.key==='Enter')sendAI()"/>
+    <button class="ai-send" onclick="sendAI()">➤</button>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-ov" id="modal">
+  <div class="modal">
+    <div class="modal-ico">🎉</div>
+    <h2 data-i18n="mo_title">تم الحجز بنجاح!</h2>
+    <p id="modalMsg"></p>
+    <button class="modal-close" onclick="closeModal()" data-i18n="mo_close">رائع!</button>
+  </div>
+</div>
+
+<script>
+// ===== i18n =====
+const T = {
+  ar:{
+    nb_home:"الرئيسية",nb_services:"الخدمات",nb_gallery:"المعرض",nb_about:"من نحن",nb_reviews:"التقييمات",nb_book:"احجز الآن",
+    hero_badge:"✦ الفندق الأفخم لكلبك ✦",hero_t1:"يستحق كلبك",hero_t2:"أفضل معاملة",
+    hero_sub:"إقامة فاخرة، رعاية استثنائية، وحب لا محدود — كلبك يستحق الأفضل في Loving Homes",
+    hero_b1:"🐾 احجز الآن",hero_b2:"اكتشف الخدمات",scroll:"مرر للأسفل",
+    st1:"كلب سعيد",st2:"سنوات خبرة",st3:"ساعة مراقبة",st4:"% رضا عملاء",
+    f_tag:"لماذا نحن؟",f_title:"ما يميّز Paws Palace",
+    f1t:"طبيب بيطري 24/7",f1d:"طبيب متخصص يسهر على صحة كلبك على مدار الساعة",
+    f2t:"كاميرات مباشرة",f2d:"تابع كلبك لحظة بلحظة من هاتفك أينما كنت",
+    f3t:"طعام مخصص",f3d:"وجبات يومية مغذية مصممة لاحتياجات كلبك",
+    f4t:"رعاية ليلية",f4d:"فريق متخصص يسهر على راحة كلبك طوال الليل",
+    sv_tag:"حزمنا الفاخرة",sv_title:"اختار الحزمة المناسبة لكلبك",
+    s1t:"الحزمة المميزة ⭐",s1d:"أجنحة ملكية واسعة ومكيفة + بث مباشر 24/7 + وجبات غورميه طازجة + جلسة سبا يومية + فحص بيطري يومي",s1p:"980 HKD / ليلة",
+    s2t:"الحزمة الكلاسيكية 🏅",s2d:"غرف خاصة مريحة + ساعتان لعب يومياً في الحديقة + وجبات Premium Kibble + صورة يومية لصاحب الكلب + مراقبة 24/7",s2p:"480 HKD / ليلة",
+    s3t:"إقامة يومية 🌞",s3d:"رعاية نهارية 8ص–8م + تفاعل اجتماعي مع كلاب أخرى + جلسة تدريب خفيف + وجبة غداء ومياه + Pet Taxi متاح",s3p:"280 HKD / يوم",
+    s4t:"المسبح الخاص",s4d:"مسبح مخصص بدرجة حرارة مثالية ومشرفين متخصصين",s4p:"إضافي مع أي حزمة",
+    s5t:"التدريب والتأهيل",s5d:"جلسات تدريب احترافية مع مدربين معتمدين على السلوكيات الأساسية",s5p:"إضافي مع أي حزمة",
+    s6t:"سبا وحلاقة فاخرة",s6d:"حمامات بمنتجات طبيعية، تسريح وتهذيب، وتدليك استرخائي متخصص",s6p:"إضافي مع أي حزمة",
+    gl_tag:"معرض الصور",gl_title:"لحظات لا تُنسى",
+    gc1:"الأجنحة الفاخرة",gc2:"جلسة الحلاقة",gc3:"وقت اللعب",gc4:"حمام السبا",gc5:"جلسة السباحة",gc6:"الحديقة العلاجية",gc7:"وجبات فاخرة",gc8:"وقت القيلولة",
+    ab_title:"قصتنا مع الكلاب الفاخرة",
+    ab_p1:"تأسس Paws Palace عام 2017 بحلم بسيط: أن يحصل كل كلب على نفس مستوى الرعاية والرفاهية التي يستحقها.",
+    ab_p2:"فريقنا يتكون من أكثر من 30 متخصصاً في رعاية الحيوانات، من أطباء بيطريين إلى مدربين محترفين.",
+    ab_p3:"نؤمن أن الكلب فرد من العائلة يستحق أفضل رعاية في بيئة آمنة ومريحة ومليئة بالحب.",
+    ab1:"🏆 أفضل فندق 2023",ab2:"✅ معتمد دولياً",ab3:"🌿 صديق للبيئة",ab4:"❤️ موثوق بالمجتمع",
+    rv_tag:"آراء عملائنا",rv_title:"ماذا يقول أهل الكلاب",
+    r1t:'"تجربة لا تُنسى! كلبي عاد أكثر سعادة مما ذهب. الفريق محترف والمكان رائع"',r1n:"سارة الأحمد",r1d:'صاحبة "بابلو" اللابرادور',
+    r2t:'"الكاميرات المباشرة رائعة! تابعت كلبي وكان يلعب ويستمتع طوال الوقت"',r2n:"محمد الخليل",r2d:'صاحب "ماكس" الجولدن ريتريفر',
+    r3t:'"أفضل فندق كلاب! سلوى عادت مدللة ومنظفة وسعيدة. سأحجز دائماً هنا"',r3n:"ريم النجار",r3d:'صاحبة "سلوى" البودل',
+    r4t:'"الطعام المخصص فاجأني! قدموا نظاماً غذائياً متكاملاً لكلبي"',r4n:"خالد المنصور",r4d:'صاحب "روكي" الألزاشي',
+    r5t:'"المسبح كان مفاجأة! كلبي أحب السباحة ورجع محتاج نوم طويل من اللعب"',r5n:"نور الرشيد",r5d:'صاحبة "لونا" الهاسكي',
+    r6t:'"خدمة ممتازة والموظفون يعاملون الكلاب بكثير من الحب"',r6n:"أحمد البكري",r6d:'صاحب "تيدي" البيغل',
+    bk_tag:"الحجز",bk_title:"احجز مكان كلبك الآن",
+    fm1:"اسم صاحب الكلب",fm2:"اسم الكلب",fm3:"تاريخ الوصول",fm4:"تاريخ المغادرة",
+    fm5:"الخدمة المطلوبة",fms:"اختر الخدمة",fm6:"سلالة الكلب",fm7:"ملاحظات خاصة",fm_sub:"🐾 تأكيد الحجز",
+    f_tag2:"حيث يُعامَل كلبك كملك",fl1:"سياسة الخصوصية",fl2:"الشروط والأحكام",fl3:"تواصل معنا",fl4:"الأسئلة الشائعة",fc:"جميع الحقوق محفوظة",
+    ai_title:"🤖 مساعد Paws Palace",ai_welcome:"مرحباً! 🐾 اسألني عن خدماتنا، الأسعار، أو أي شيء يخص كلبك!",
+    mo_title:"تم الحجز بنجاح!",mo_close:"رائع!",
+    bk_msg:(n,d)=>`سنتطلع إلى استقبال ${d||'كلبك'} يا ${n||'عزيزنا'}! ستصلك رسالة تأكيد قريباً. 🐾`
+  },
+  en:{
+    nb_home:"Home",nb_services:"Services",nb_gallery:"Gallery",nb_about:"About",nb_reviews:"Reviews",nb_book:"Book Now",
+    hero_badge:"✦ The Finest Hotel for Your Dog ✦",hero_t1:"Your Dog Deserves",hero_t2:"The Best Care",
+    hero_sub:"Luxury stays, exceptional care, and boundless love — your dog deserves the best at Loving Homes.",
+    hero_b1:"🐾 Book Now",hero_b2:"Explore Services",scroll:"Scroll Down",
+    st1:"Happy Dogs",st2:"Years Experience",st3:"Hour Surveillance",st4:"% Satisfaction",
+    f_tag:"Why Us?",f_title:"What Sets Paws Palace Apart",
+    f1t:"24/7 Vet Care",f1d:"A specialist available round-the-clock for your dog's health.",
+    f2t:"Live Cameras",f2d:"Watch your dog live from your phone wherever you are.",
+    f3t:"Custom Meals",f3d:"Daily nutritious meals designed for your dog's specific needs.",
+    f4t:"Night Care",f4d:"A dedicated night team ensures your dog rests comfortably.",
+    sv_tag:"Our Packages",sv_title:"Choose the Perfect Package",
+    s1t:"Premium Package ⭐",s1d:"Royal suite + 24/7 live camera + fresh gourmet meals + daily spa session + daily vet check",s1p:"980 HKD / night",
+    s2t:"Classic Package 🏅",s2d:"Private comfortable room + 2hrs daily play + Premium Kibble meals + daily photo update + 24/7 monitoring",s2p:"480 HKD / night",
+    s3t:"Day Stay 🌞",s3d:"Daytime care 8am–8pm + social play with other dogs + light training + lunch & water + Pet Taxi available",s3p:"280 HKD / day",
+    s4t:"Private Pool",s4d:"Dog pool with ideal temperature and certified swimming supervisors.",s4p:"Add-on to any package",
+    s5t:"Training & Rehabilitation",s5d:"Professional training sessions with certified dog trainers.",s5p:"Add-on to any package",
+    s6t:"Luxury Spa & Grooming",s6d:"Organic baths, full grooming, expert relaxation massages.",s6p:"Add-on to any package",
+    gl_tag:"Photo Gallery",gl_title:"Unforgettable Moments",
+    gc1:"Luxury Suites",gc2:"Grooming Session",gc3:"Playtime",gc4:"Spa Bath",gc5:"Swimming Session",gc6:"Therapy Garden",gc7:"Gourmet Meals",gc8:"Nap Time",
+    ab_title:"Our Story with Luxury Dogs",
+    ab_p1:"Paws Palace was founded in 2017 with a simple dream: that every dog receives the care and luxury it deserves.",
+    ab_p2:"Our team consists of over 30 animal care specialists, from certified vets to professional trainers and nutritionists.",
+    ab_p3:"We believe a dog is a family member deserving the best care in a safe, comfortable, and loving environment.",
+    ab1:"🏆 Best Hotel 2023",ab2:"✅ Internationally Certified",ab3:"🌿 Eco-Friendly",ab4:"❤️ Community Trusted",
+    rv_tag:"Client Reviews",rv_title:"What Our Clients Say",
+    r1t:'"Unforgettable! My dog came back even happier. The team is professional and the place is amazing."',r1n:"Sarah Al-Ahmad",r1d:'"Pablo" the Labrador\'s owner',
+    r2t:'"The live cameras are brilliant! I watched my dog playing the whole time. Thank you Paws Palace!"',r2n:"Mohammed Al-Khalil",r2d:'"Max" the Golden Retriever\'s owner',
+    r3t:'"Best dog hotel! Salwa came back pampered, clean, and happy. I\'ll always book here."',r3n:"Reem Al-Najjar",r3d:'"Salwa" the Poodle\'s owner',
+    r4t:'"The custom meals surprised me! They designed a complete diet plan tailored to my dog."',r4n:"Khaled Al-Mansour",r4d:'"Rocky" the Alsatian\'s owner',
+    r5t:'"The pool was a surprise! My dog loved swimming and came back needing a long nap."',r5n:"Nour Al-Rashid",r5d:'"Luna" the Husky\'s owner',
+    r6t:'"Excellent service. The staff treat the dogs with so much love and care."',r6n:"Ahmad Al-Bakri",r6d:'"Teddy" the Beagle\'s owner',
+    bk_tag:"Reservation",bk_title:"Book Your Dog's Stay Now",
+    fm1:"Owner Name",fm2:"Dog Name",fm3:"Check-in Date",fm4:"Check-out Date",
+    fm5:"Requested Service",fms:"Select Service",fm6:"Dog Breed",fm7:"Special Notes",fm_sub:"🐾 Confirm Booking",
+    f_tag2:"Where Your Dog is Treated Like Royalty",fl1:"Privacy Policy",fl2:"Terms & Conditions",fl3:"Contact Us",fl4:"FAQ",fc:"All Rights Reserved",
+    ai_title:"🤖 Paws Palace Assistant",ai_welcome:"Hello! 🐾 Ask me about our services, pricing, or anything about your dog!",
+    mo_title:"Booking Confirmed!",mo_close:"Awesome!",
+    bk_msg:(n,d)=>`We look forward to welcoming ${d||'your dog'}, ${n||'dear guest'}! Confirmation coming soon. 🐾`
+  }
+};
+
+let lang='ar', darkMode=true;
+
+function applyLang(){
+  const t=T[lang];
+  document.documentElement.lang=lang;
+  document.documentElement.dir=lang==='ar'?'rtl':'ltr';
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k=el.getAttribute('data-i18n');
+    if(t[k]&&typeof t[k]==='string') el.textContent=t[k];
+  });
+  document.querySelector('.lang-btn').textContent=lang==='ar'?'EN':'عربي';
+  // Update AI welcome
+  document.querySelector('#aiMsgs .msg.bot').textContent=t.ai_welcome;
+}
+
+function toggleLang(){lang=lang==='ar'?'en':'ar';applyLang()}
+
+function toggleTheme(){
+  darkMode=!darkMode;
+  document.body.classList.toggle('light',!darkMode);
+}
+
+// ===== PAGES =====
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  const nb=document.getElementById('nb-'+id);
+  if(nb) nb.classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='home') setTimeout(animateCounters,400);
+}
+
+// ===== PARTICLES =====
+(function(){
+  const c=document.getElementById('particles');
+  for(let i=0;i<18;i++){
+    const p=document.createElement('div');
+    const s=Math.random()*4+2;
+    p.className='particle';
+    p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;animation-duration:${Math.random()*14+7}s;animation-delay:${Math.random()*10}s;`;
+    c.appendChild(p);
+  }
+})();
+
+// ===== COUNTERS =====
+let counted=false;
+function animateCounters(){
+  if(counted) return; counted=true;
+  document.querySelectorAll('[data-count]').forEach(el=>{
+    const target=+el.getAttribute('data-count');
+    let cur=0; const step=target/55;
+    const tm=setInterval(()=>{
+      cur=Math.min(cur+step,target);
+      el.textContent=Math.floor(cur).toLocaleString();
+      if(cur>=target){
+        el.textContent=target.toLocaleString()+(target===98?'%':target===24?'/7':'+');
+        clearInterval(tm);
+      }
+    },28);
+  });
+}
+setTimeout(animateCounters,600);
+
+// ===== BOOKING =====
+function submitBooking(){
+  const n=document.getElementById('ownerName').value.trim();
+  const d=document.getElementById('dogName').value.trim();
+  const ci=document.getElementById('checkin').value;
+  const co=document.getElementById('checkout').value;
+  if(!n||!d||!ci||!co){alert(lang==='ar'?'الرجاء ملء الحقول المطلوبة':'Please fill required fields');return;}
+  document.getElementById('modalMsg').textContent=T[lang].bk_msg(n,d);
+  document.getElementById('modal').classList.add('show');
+}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+
+// ===== AI =====
+function toggleAI(){document.getElementById('aiPanel').classList.toggle('open')}
+
+async function sendAI(){
+  const inp=document.getElementById('aiIn');
+  const msg=inp.value.trim(); if(!msg) return;
+  const msgs=document.getElementById('aiMsgs');
+
+  const uDiv=document.createElement('div');
+  uDiv.className='msg user'; uDiv.textContent=msg;
+  msgs.appendChild(uDiv); inp.value='';
+
+  const typ=document.createElement('div');
+  typ.className='typing'; typ.innerHTML='<span></span><span></span><span></span>';
+  msgs.appendChild(typ); msgs.scrollTop=msgs.scrollHeight;
+
+  try{
+    const sys=lang==='ar'
+      ?`أنت مساعد ودود لفندق الكلاب الفاخر "Paws Palace" في عمّان. أجب باختصار وبأسلوب لطيف باللغة العربية الدارجة. الخدمات والأسعار: أجنحة فاخرة (150 د.أ/ليلة)، سبا وحلاقة (80 د.أ/جلسة)، منطقة لعب (مجاناً)، مسبح (60 د.أ/جلسة)، تدريب (100 د.أ/دورة). مميزات: طبيب بيطري 24/7، كاميرات مباشرة، طعام مخصص، رعاية ليلية.`
+      :`You are a friendly assistant for "Paws Palace", a luxury dog hotel in Amman, Jordan. Reply briefly and warmly in English. Services: Luxury Suites (JD 150/night), Spa & Grooming (JD 80/session), Play Area (free), Pool (JD 60/session), Training (JD 100/course). Features: 24/7 vet, live cameras, custom meals, night care.`;
+
+    const res=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,system:sys,messages:[{role:"user",content:msg}]})
+    });
+    const data=await res.json();
+    typ.remove();
+    const bDiv=document.createElement('div');
+    bDiv.className='msg bot';
+    bDiv.textContent=data.content?.[0]?.text||(lang==='ar'?'عذراً، حدث خطأ':'Sorry, an error occurred');
+    msgs.appendChild(bDiv);
+  }catch(e){
+    typ.remove();
+    const eDiv=document.createElement('div');
+    eDiv.className='msg bot';
+    eDiv.textContent=lang==='ar'?'عذراً، فشل الاتصال. حاول مجدداً!':'Connection failed, please try again!';
+    msgs.appendChild(eDiv);
+  }
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+applyLang();
+</script>
+</body>
+</html>
